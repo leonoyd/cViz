@@ -49,23 +49,25 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
     #    return []
     #count = count +1
     #print("entering fn")
-    print (fn_call_string)
+    i = 0
+
+    #print (fn_call_string)
     for idx in fn_index:
         my_fn_string = parse_line_list[idx][side]
         my_fn_index = get_function_index(my_fn_string, parse_line_list)
         if my_fn_index[side]:
             temp_fn_idx = []
-            i = 0
             for item in my_fn_index[side]:
                 if item not in accumulated_idx:
                     temp_fn_idx.append(item)
-                print("loop")
+                #print("loop")
             if temp_fn_idx:        
-                print (i)
-                print (temp_fn_idx)
-                print (my_fn_index[side])
-                print (accumulated_idx)
-                print ("")
+                #print (fn_index)
+                #print (i)
+                #print (temp_fn_idx)
+                #print (my_fn_index[side])
+                #print (accumulated_idx)
+                #print ("")
                 accumulated_idx += temp_fn_idx
                 #for line in my_fn_index[0]:
                     #print(parse_line_list[line], line, my_fn_string)
@@ -79,12 +81,13 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
             #print(my_fn_string)
                 #print(parsed_line_list[idx][0], parsed_line_list[idx][1])
         #print("returning from fn")
+        i+=1
     return accumulated_idx
 
 file = open("source_mapping.txt", "r")
 line_list = get_file_content(file)
 parsed_line_list = split_line_list(line_list)
-fn_string = "int lensREDCtrl232(unsigned int)"
+fn_string = "void sysError(const char*, char*, ...)"
 fn_idx = get_function_index(fn_string, parsed_line_list)
 
 accumulated_idx = []
