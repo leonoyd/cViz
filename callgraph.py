@@ -42,13 +42,13 @@ def split_line_list(line_list):
 
     return parsed_line_list
 count = 0
-def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side):
+
+def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side, accumulated_idx):
     global count
     #if count ==20:
     #    return []
     #count = count +1
     #print("entering fn")
-    accumulated_idx = []
     for idx in fn_index:
         my_fn_string = parse_line_list[idx][side]
         my_fn_index = get_function_index(my_fn_string, parse_line_list)
@@ -58,7 +58,7 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side)
                 #print(parse_line_list[line], line, my_fn_string)
             #print (my_fn_index)
            # print("recursive enter")
-            tmp_idx = get_table_index_recursively(my_fn_index[side], my_fn_string, parse_line_list, side)
+            tmp_idx = get_table_index_recursively(my_fn_index[side], my_fn_string, parse_line_list, side, accumulated_idx)
             #print("recursive exit")
             if tmp_idx:
                 accumulated_idx +=tmp_idx
@@ -71,7 +71,7 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side)
 file = open("source_mapping.txt", "r")
 line_list = get_file_content(file)
 parsed_line_list = split_line_list(line_list)
-fn_string = "set_gain"
+fn_string = "int lensREDCtrl232(unsigned int)"
 fn_idx = get_function_index(fn_string, parsed_line_list)
 
 accumulated_idx = []
@@ -79,7 +79,7 @@ accumulated_idx = []
 if fn_idx[0]:
     fn = parsed_line_list[fn_idx[0][0]]
     accumulated_idx = fn_idx[0]
-    tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0)
+    tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx)
     if tmp_idx:
         accumulated_idx += tmp_idx
 
@@ -87,7 +87,7 @@ if fn_idx[0]:
 if fn_idx[1]:
     fn = parsed_line_list[fn_idx[1][0]]
     accumulated_idx += fn_idx[1]
-    tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1)
+    tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx)
     if tmp_idx:
         accumulated_idx += tmp_idx
 
