@@ -60,10 +60,11 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
             for item in my_fn_index[side]:
                 if item not in accumulated_idx:
                     temp_fn_idx.append(item)
+                
+            #print (i)
                 #print("loop")
             if temp_fn_idx:        
                 #print (fn_index)
-                #print (i)
                 #print (temp_fn_idx)
                 #print (my_fn_index[side])
                 #print (accumulated_idx)
@@ -83,11 +84,16 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
         #print("returning from fn")
         i+=1
     return accumulated_idx
+def remove_duplicates(line_list):
+    #print(len(line_list))
+    retval = list(set(line_list))
+    return retval 
 
 file = open("source_mapping.txt", "r")
 line_list = get_file_content(file)
+#remove_duplicates(line_list)
 parsed_line_list = split_line_list(line_list)
-fn_string = "void sysError(const char*, char*, ...)"
+fn_string = "bool PVLogger::Flush(bool)"
 fn_idx = get_function_index(fn_string, parsed_line_list)
 
 accumulated_idx = []
@@ -97,7 +103,7 @@ if fn_idx[0]:
     accumulated_idx = fn_idx[0]
     tmp_idx = get_table_index_recursively(fn_idx[0], fn, parsed_line_list, 0, accumulated_idx)
     if tmp_idx:
-        accumulated_idx += tmp_idx
+        accumulated_idx = tmp_idx
 
 # handling callee side
 if fn_idx[1]:
@@ -105,7 +111,7 @@ if fn_idx[1]:
     accumulated_idx += fn_idx[1]
     tmp_idx = get_table_index_recursively(fn_idx[1], fn, parsed_line_list, 1, accumulated_idx)
     if tmp_idx:
-        accumulated_idx += tmp_idx
+        accumulated_idx = tmp_idx
 
 
 print(line_list[0])
