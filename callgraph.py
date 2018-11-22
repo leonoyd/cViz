@@ -49,23 +49,36 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
     #    return []
     #count = count +1
     #print("entering fn")
+    print (fn_call_string)
     for idx in fn_index:
         my_fn_string = parse_line_list[idx][side]
         my_fn_index = get_function_index(my_fn_string, parse_line_list)
         if my_fn_index[side]:
-            accumulated_idx += my_fn_index[side]
-            #for line in my_fn_index[0]:
-                #print(parse_line_list[line], line, my_fn_string)
-            #print (my_fn_index)
-           # print("recursive enter")
-            tmp_idx = get_table_index_recursively(my_fn_index[side], my_fn_string, parse_line_list, side, accumulated_idx)
-            #print("recursive exit")
-            if tmp_idx:
-                accumulated_idx +=tmp_idx
-                #print (tmp_idx)
-        #print(my_fn_string)
-            #print(parsed_line_list[idx][0], parsed_line_list[idx][1])
-    #print("returning from fn")
+            temp_fn_idx = []
+            i = 0
+            for item in my_fn_index[side]:
+                if item not in accumulated_idx:
+                    temp_fn_idx.append(item)
+                print("loop")
+            if temp_fn_idx:        
+                print (i)
+                print (temp_fn_idx)
+                print (my_fn_index[side])
+                print (accumulated_idx)
+                print ("")
+                accumulated_idx += temp_fn_idx
+                #for line in my_fn_index[0]:
+                    #print(parse_line_list[line], line, my_fn_string)
+                #print (my_fn_index)
+               # print("recursive enter")
+                tmp_idx = get_table_index_recursively(temp_fn_idx, my_fn_string, parse_line_list, side, accumulated_idx)
+                #print("recursive exit")
+                if tmp_idx:
+                    accumulated_idx =tmp_idx
+                    #print (tmp_idx)
+            #print(my_fn_string)
+                #print(parsed_line_list[idx][0], parsed_line_list[idx][1])
+        #print("returning from fn")
     return accumulated_idx
 
 file = open("source_mapping.txt", "r")
@@ -79,7 +92,7 @@ accumulated_idx = []
 if fn_idx[0]:
     fn = parsed_line_list[fn_idx[0][0]]
     accumulated_idx = fn_idx[0]
-    tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx)
+    tmp_idx = get_table_index_recursively(fn_idx[0], fn, parsed_line_list, 0, accumulated_idx)
     if tmp_idx:
         accumulated_idx += tmp_idx
 
@@ -87,7 +100,7 @@ if fn_idx[0]:
 if fn_idx[1]:
     fn = parsed_line_list[fn_idx[1][0]]
     accumulated_idx += fn_idx[1]
-    tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx)
+    tmp_idx = get_table_index_recursively(fn_idx[1], fn, parsed_line_list, 1, accumulated_idx)
     if tmp_idx:
         accumulated_idx += tmp_idx
 
