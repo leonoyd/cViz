@@ -38,20 +38,10 @@ def split_line_list(line_list):
         ret_list = strip_line(line)
         if ret_list:
             parsed_line_list.append(ret_list)
-            #print(ret_list[0], ret_list[1], ret_list[2])
 
     return parsed_line_list
-count = 0
 
 def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side, accumulated_idx):
-    global count
-    #if count ==20:
-    #    return []
-    #count = count +1
-    #print("entering fn")
-    i = 0
-
-    #print (fn_call_string)
     for idx in fn_index:
         my_fn_string = parse_line_list[idx][side]
         my_fn_index = get_function_index(my_fn_string, parse_line_list)
@@ -60,38 +50,23 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
             for item in my_fn_index[side]:
                 if item not in accumulated_idx:
                     temp_fn_idx.append(item)
-                
-            #print (i)
-                #print("loop")
-            if temp_fn_idx:        
-                #print (fn_index)
-                #print (temp_fn_idx)
-                #print (my_fn_index[side])
-                #print (accumulated_idx)
-                #print ("")
+
+            if temp_fn_idx:
                 accumulated_idx += temp_fn_idx
-                #for line in my_fn_index[0]:
-                    #print(parse_line_list[line], line, my_fn_string)
-                #print (my_fn_index)
-               # print("recursive enter")
                 tmp_idx = get_table_index_recursively(temp_fn_idx, my_fn_string, parse_line_list, side, accumulated_idx)
-                #print("recursive exit")
+
                 if tmp_idx:
                     accumulated_idx =tmp_idx
-                    #print (tmp_idx)
-            #print(my_fn_string)
-                #print(parsed_line_list[idx][0], parsed_line_list[idx][1])
-        #print("returning from fn")
-        i+=1
+
     return accumulated_idx
+
 def remove_duplicates(line_list):
-    #print(len(line_list))
     retval = list(set(line_list))
-    return retval 
+    return retval
 
 file = open("source_mapping.txt", "r")
 line_list = get_file_content(file)
-#remove_duplicates(line_list)
+
 parsed_line_list = split_line_list(line_list)
 fn_string = "bool PVLogger::Flush(bool)"
 fn_idx = get_function_index(fn_string, parsed_line_list)
@@ -113,15 +88,10 @@ if fn_idx[1]:
     if tmp_idx:
         accumulated_idx = tmp_idx
 
-
 print(line_list[0])
 for idx in accumulated_idx:
     print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
 print (line_list[-1])
-    #for idx in fn_idx[1]:
-#    print(parsed_line_list[idx][0], parsed_line_list[idx][1])
 
 line = '"prvIdleTask" -> "xTaskResumeAll" [style=dotted];'
 ret_list = strip_line(line)
-#while 1:
-#    pass
