@@ -119,12 +119,15 @@ def parse_arguments():
 
     args = parser.parse_args()
 
+parse_arguments()
+#print (args.functionnames)
 file = open("source_mapping.txt", "r")
 line_list = get_file_content(file)
 
-parse_args()
+#if(arg.functionnames)
+#    function_list =
 parsed_line_list = split_line_list(line_list)
-fn_string = "bool PVLogger::Flush(bool)"
+fn_string = args.functionnames[0]
 fn_idx = get_function_index(fn_string, parsed_line_list)
 
 accumulated_idx = []
