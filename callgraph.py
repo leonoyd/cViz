@@ -1,3 +1,8 @@
+import argparse
+import os
+import re
+
+args = None
 
 def strip_line(line):
     call_index = line.find(' -> ')
@@ -66,9 +71,58 @@ def remove_duplicates(line_list):
     retval = list(set(line_list))
     return retval
 
+def parse_arguments():
+    global args
+
+    parser = argparse.ArgumentParser(
+              description='Generate a call graph for C/C++ projects')
+
+    parser.add_argument(
+        dest='functionnames',
+        metavar='functionnames',
+        nargs='*')
+
+    parser.add_argument('--verbose',
+        dest='verbose',
+        action='store_true',
+        help='verbose mode')
+
+    parser.add_argument('-v', '--version',
+        dest='version',
+        action='store_true',
+        help='display version information')
+
+    parser.add_argument('-o', '--outfile',
+        dest='outfile',
+        action='store',
+        help='output filename')
+
+    parser.add_argument('--include',
+        dest='include',
+        action='store',
+        help='include only function specified')
+
+    parser.add_argument('--exclude',
+        dest='exclude',
+        action='store',
+        help='exclude all functions but those specified')
+
+    parser.add_argument('-A',
+            dest='callcount',
+            action='store',
+            help='traverse and display x linkage up the stack')
+
+    parser.add_argument('-B',
+            dest='calleecount',
+            action='store',
+            help='traverse and display x linkage down the stack')
+
+    args = parser.parse_args()
+
 file = open("source_mapping.txt", "r")
 line_list = get_file_content(file)
 
+parse_args()
 parsed_line_list = split_line_list(line_list)
 fn_string = "bool PVLogger::Flush(bool)"
 fn_idx = get_function_index(fn_string, parsed_line_list)
