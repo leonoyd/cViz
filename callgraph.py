@@ -3,6 +3,7 @@ def strip_line(line):
     call_index = line.find(' -> ')
     if call_index == -1:
         return []
+
     call_string = line[:call_index]
     callee_style_string = line[call_index+4:]
 
@@ -15,6 +16,7 @@ def strip_line(line):
 def get_function_index(fn, parsed_line_list):
     fn_call_indexes = []
     fn_callee_indexes = []
+
     line_idx = 0
     for line in parsed_line_list:
         if -1 != line[0].find(fn):
