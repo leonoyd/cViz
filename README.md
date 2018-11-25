@@ -16,7 +16,7 @@ Considering ubuntu operating system
 * graphvixz: sudo apt-get install graphviz
 * python sudo apt-get install python
 
-To install `CallGr` onto your system:
+To install __CallGr__ onto your system:
 
 ```
 git clone https://github.com/leonoyd/callgr.git
@@ -26,7 +26,7 @@ python setup.py install
 
 # Usage
 
-Running for the first time
+__Running for the first time__
 
 * navigate to the project directory
 * run `make clean`
@@ -36,9 +36,11 @@ Running for the first time
   -u option tells the application to update its database(use this whenever you rebuild the appication)
 * can also be involed without a function name ie ./callgr -u
 
-Consecutive runs
+__Consecutive runs__
+
 For consecutive runs simply remove the -u so that you dont regenerate the database file.
 
+__Notes__
 note(1): To get GCC to generate the files required(rtl.expand) the -fdump-rtl-expand need to be appended to the CFLAGS or CPPFLAGS
 eg. `make CFLAGS=-fdump-rtl-expand` or `make CPPFLAGS=-fdump-rtl-expand`
 
