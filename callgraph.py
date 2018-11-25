@@ -1,4 +1,5 @@
 import argparse
+import sys
 import subprocess
 import pipes
 import os
@@ -164,42 +165,52 @@ line_list = get_file_content(file)
 #if(arg.functionnames)
 #    function_list =
 parsed_line_list = split_line_list(line_list)
-fn_string = args.functionnames[0]
-fn_idx = get_function_index(fn_string, parsed_line_list)
-
-accumulated_idx = []
-# handling call side
-if fn_idx[0]:
-    fn = parsed_line_list[fn_idx[0][0]]
-    accumulated_idx = fn_idx[0]
-    tmp_idx = get_table_index_recursively(fn_idx[0], fn, parsed_line_list, 0, accumulated_idx)
-    if tmp_idx:
-        accumulated_idx = tmp_idx
-
-# handling callee side
-if fn_idx[1]:
-    fn = parsed_line_list[fn_idx[1][0]]
-    accumulated_idx += fn_idx[1]
-    tmp_idx = get_table_index_recursively(fn_idx[1], fn, parsed_line_list, 1, accumulated_idx)
-    if tmp_idx:
-        accumulated_idx = tmp_idx
 
 dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "viz_graph.pdf"]
 dot_pipe = subprocess.Popen(dot_arg,
-                        stdin=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
+                            stdin=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
 
-dot_pipe.stdin.write (line_list[0])
-for idx in accumulated_idx:
-    dot_pipe.stdin.write(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
-dot_pipe.stdin.write(fn_string + " [fillcolor=\"mediumspringgreen\", style=dotted, style=filled];\n")
-dot_pipe.stdin.write(line_list[-1])
+if args.functionnames:
+    fn_string = args.functionnames[0]
+    fn_idx = get_function_index(fn_string, parsed_line_list)
 
-print(line_list[0])
-for idx in accumulated_idx:
-    print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
-print (line_list[-1])
+    accumulated_idx = []
+    # handling call side
+    if fn_idx[0]:
+        fn = parsed_line_list[fn_idx[0][0]]
+        accumulated_idx = fn_idx[0]
+        tmp_idx = get_table_index_recursively(fn_idx[0], fn, parsed_line_list, 0, accumulated_idx)
+        if tmp_idx:
+            accumulated_idx = tmp_idx
+
+    # handling callee side
+    if fn_idx[1]:
+        fn = parsed_line_list[fn_idx[1][0]]
+        accumulated_idx += fn_idx[1]
+        tmp_idx = get_table_index_recursively(fn_idx[1], fn, parsed_line_list, 1, accumulated_idx)
+        if tmp_idx:
+            accumulated_idx = tmp_idx
+
+    dot_pipe.stdin.write (line_list[0])
+    for idx in accumulated_idx:
+        dot_pipe.stdin.write(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
+    dot_pipe.stdin.write(fn_string + " [fillcolor=\"mediumspringgreen\", style=dotted, style=filled];\n")
+    dot_pipe.stdin.write(line_list[-1])
+
+    print(line_list[0])
+    for idx in accumulated_idx:
+        print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1])
+    print (line_list[-1])
 
 
-line = '"prvIdleTask" -> "xTaskResumeAll" [style=dotted];'
-ret_list = strip_line(line)
+    line = '"prvIdleTask" -> "xTaskResumeAll" [style=dotted];'
+    ret_list = strip_line(line)
+else:
+    dot_pipe.stdin.write (line_list[0])
+    p_idx = 0
+    for line in parsed_line_list:
+        dot_pipe.stdin.write(parsed_line_list[p_idx][0] + " -> " + parsed_line_list[p_idx][1] + " " + parsed_line_list[p_idx][2])
+        print(parsed_line_list[p_idx][0] + " -> " + parsed_line_list[p_idx][1])
+        p_idx +=1
+    dot_pipe.stdin.write(line_list[-1])
