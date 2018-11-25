@@ -41,6 +41,7 @@ __Consecutive runs__
 For consecutive runs simply remove the -u so that you dont regenerate the database file.
 
 __Notes__
+
 note(1): To get GCC to generate the files required(rtl.expand) the -fdump-rtl-expand need to be appended to the CFLAGS or CPPFLAGS
 eg. `make CFLAGS=-fdump-rtl-expand` or `make CPPFLAGS=-fdump-rtl-expand`
 
