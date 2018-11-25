@@ -166,7 +166,7 @@ line_list = get_file_content(file)
 #    function_list =
 parsed_line_list = split_line_list(line_list)
 
-dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "viz_graph.pdf"]
+dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
 dot_pipe = subprocess.Popen(dot_arg,
                             stdin=subprocess.PIPE,
                             stderr=subprocess.PIPE)
