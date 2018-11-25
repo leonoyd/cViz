@@ -1,6 +1,11 @@
 import argparse
+import subprocess
+import pipes
+import os
+import fnmatch
 import os
 import re
+import glob
 
 args = None
 
@@ -117,11 +122,43 @@ def parse_arguments():
             action='store',
             help='traverse and display x linkage down the stack')
 
+    parser.add_argument('-u',
+            dest='update',
+            action='store_true',
+            help='updates the file source_mapping with recent rtl information')
+
     args = parser.parse_args()
 
+def find(pattern, path):
+    result = []
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            if fnmatch.fnmatch(name, pattern):
+                result.append(os.path.join(root, name))
+    return result
+
 parse_arguments()
-#print (args.functionnames)
-file = open("source_mapping.txt", "r")
+
+if args.update:
+    dot_expand_files = find ('*.expand', '.')
+    program_arg = ["perl", "/usr/local/bin/egypt"]
+    program_arg.extend(dot_expand_files)
+    pipe = subprocess.Popen(program_arg,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+
+    w_file = open(".source_mapping", "w")
+
+    output, error = pipe.communicate()
+    if not error:
+        print("updating record")
+        w_file.writelines(output)
+    else:
+        print("Error updating record")
+
+    w_file.close()
+
+file = open(".source_mapping", "r")
 line_list = get_file_content(file)
 
 #if(arg.functionnames)
