@@ -184,7 +184,7 @@ if fn_idx[1]:
     if tmp_idx:
         accumulated_idx = tmp_idx
 
-dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=TB", "-Tps", "-o", "viz_graph.pdf"]
+dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "viz_graph.pdf"]
 dot_pipe = subprocess.Popen(dot_arg,
                         stdin=subprocess.PIPE,
                         stderr=subprocess.PIPE)
@@ -192,12 +192,12 @@ dot_pipe = subprocess.Popen(dot_arg,
 dot_pipe.stdin.write (line_list[0])
 for idx in accumulated_idx:
     dot_pipe.stdin.write(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
+dot_pipe.stdin.write(fn_string + " [fillcolor=\"mediumspringgreen\", style=dotted, style=filled];\n")
 dot_pipe.stdin.write(line_list[-1])
 
 print(line_list[0])
 for idx in accumulated_idx:
     print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
-print("\"jsfjrtFree\" -> " +  "\""+fn_string+"\"" + " [fillcolor=\"red\", style=dotted, style=filled];\n")
 print (line_list[-1])
 
 
