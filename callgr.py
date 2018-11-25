@@ -143,7 +143,7 @@ def main():
 
     if args.update:
         dot_expand_files = find ('*.expand', '.')
-        program_arg = ["perl", "/usr/local/bin/egypt"]
+        program_arg = ["perl", "/home/ldouglas/perl5/bin/egypt"]
         program_arg.extend(dot_expand_files)
         pipe = subprocess.Popen(program_arg,
                                 stdout=subprocess.PIPE,
@@ -159,21 +159,18 @@ def main():
             print("Error updating record")
 
         w_file.close()
+        pipe.kill()
 
     file = open(".source_mapping", "r")
     line_list = get_file_content(file)
-
+    file.close()
     #if(arg.functionnames)
     #    function_list =
     parsed_line_list = split_line_list(line_list)
 
-    dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
-    dot_pipe = subprocess.Popen(dot_arg,
-                                stdin=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-
     if args.functionnames:
         fn_string = args.functionnames[0]
+        #print("creating gramp", fn_string, dot_pipe )
         fn_idx = get_function_index(fn_string, parsed_line_list)
 
         accumulated_idx = []
@@ -192,22 +189,29 @@ def main():
             tmp_idx = get_table_index_recursively(fn_idx[1], fn, parsed_line_list, 1, accumulated_idx)
             if tmp_idx:
                 accumulated_idx = tmp_idx
+        
+        dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
+        dot_pipe = subprocess.Popen(dot_arg,
+                                stdin=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
 
         dot_pipe.stdin.write (line_list[0])
         for idx in accumulated_idx:
             dot_pipe.stdin.write(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
-        dot_pipe.stdin.write(fn_string + " [fillcolor=\"mediumspringgreen\", style=dotted, style=filled];\n")
+        dot_pipe.stdin.write("\"" + fn_string + "\"" + " [fillcolor=\"red\", style=dotted, style=filled];")
         dot_pipe.stdin.write(line_list[-1])
-
+        
         print(line_list[0])
         for idx in accumulated_idx:
-            print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1])
+            print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
         print (line_list[-1])
 
-
-        line = '"prvIdleTask" -> "xTaskResumeAll" [style=dotted];'
-        ret_list = strip_line(line)
     else:
+        dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
+        dot_pipe = subprocess.Popen(dot_arg,
+                                stdin=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+
         dot_pipe.stdin.write (line_list[0])
         p_idx = 0
         for line in parsed_line_list:
@@ -215,3 +219,8 @@ def main():
             print(parsed_line_list[p_idx][0] + " -> " + parsed_line_list[p_idx][1])
             p_idx +=1
         dot_pipe.stdin.write(line_list[-1])
+    
+    ret_err = dot_pipe.communicate()
+
+    if ret_err: 
+        print(ret_err)
