@@ -204,10 +204,11 @@ def main():
         dot_pipe.stdin.write("\"" + fn_string + "\"" + " [fillcolor=\"red\", style=dotted, style=filled];")
         dot_pipe.stdin.write(line_list[-1])
         
-        print(line_list[0])
-        for idx in accumulated_idx:
-            print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
-        print (line_list[-1])
+        if args.verbose:
+            print(line_list[0])
+            for idx in accumulated_idx:
+                print(parsed_line_list[idx][0] + " -> " + parsed_line_list[idx][1] + " " + parsed_line_list[idx][2])
+            print (line_list[-1])
 
     else:
         dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
@@ -219,11 +220,12 @@ def main():
         p_idx = 0
         for line in parsed_line_list:
             dot_pipe.stdin.write(parsed_line_list[p_idx][0] + " -> " + parsed_line_list[p_idx][1] + " " + parsed_line_list[p_idx][2])
-            print(parsed_line_list[p_idx][0] + " -> " + parsed_line_list[p_idx][1])
+            if args.verbose:
+                print(parsed_line_list[p_idx][0] + " -> " + parsed_line_list[p_idx][1])
             p_idx +=1
         dot_pipe.stdin.write(line_list[-1])
     
     ret_err = dot_pipe.communicate()
-
-    if ret_err: 
-        print(ret_err)
+    if verbose:
+        if ret_err: 
+            print(ret_err)
