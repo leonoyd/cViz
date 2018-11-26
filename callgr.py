@@ -31,9 +31,9 @@ def get_function_index(fn, parsed_line_list):
     line_idx = 0
     for line in parsed_line_list:
         if -1 != line[0].find(fn):
-            fn_callee_indexes.append(line_idx)
-        if -1 !=  line[1].find(fn):
             fn_call_indexes.append(line_idx)
+        if -1 !=  line[1].find(fn):
+            fn_callee_indexes.append(line_idx)
         line_idx = line_idx + 1
     return [fn_call_indexes, fn_callee_indexes]
 
@@ -118,13 +118,13 @@ def parse_arguments():
 
     parser.add_argument('-A',
         default='9999999',
-        dest='callcount',
+        dest='calldepth',
         action='store',
         help='traverse and display x linkage up the stack')
 
     parser.add_argument('-B',
         default='9999999',
-        dest='calleecount',
+        dest='calleedepth',
         action='store',
         help='traverse and display x linkage down the stack')
 
@@ -183,7 +183,7 @@ def main():
         if fn_idx[0]:
             fn = parsed_line_list[fn_idx[0][0]]
             accumulated_idx = list(fn_idx[0])
-            tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx, 0, int(args.callcount))
+            tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx, 0, int(args.calldepth))
             if tmp_idx:
                 accumulated_idx = list(tmp_idx)
 
@@ -191,7 +191,7 @@ def main():
         if fn_idx[1]:
             fn = parsed_line_list[fn_idx[1][0]]
             accumulated_idx += fn_idx[1]
-            tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx, 0, int(args.calleecount))
+            tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx, 0, int(args.calleedepth))
             if tmp_idx:
                 accumulated_idx = list(tmp_idx)
         
