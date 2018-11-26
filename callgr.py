@@ -31,9 +31,9 @@ def get_function_index(fn, parsed_line_list):
     line_idx = 0
     for line in parsed_line_list:
         if -1 != line[0].find(fn):
-            fn_call_indexes.append(line_idx)
-        if -1 !=  line[1].find(fn):
             fn_callee_indexes.append(line_idx)
+        if -1 !=  line[1].find(fn):
+            fn_call_indexes.append(line_idx)
         line_idx = line_idx + 1
     return [fn_call_indexes, fn_callee_indexes]
 
@@ -56,11 +56,20 @@ def split_line_list(line_list):
 
 def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side, accumulated_idx, level, max_level):
     r_level = level + 1
+
+    my_fn_side = 0
+    if side == 1:
+        my_fn_side = 0
+    else:
+        my_fn_side = 1
+
+
     if r_level < max_level:
         print(r_level, max_level,len(fn_index),fn_call_string, fn_index)
         for idx in fn_index:
             my_fn_string = parse_line_list[idx][side]
             my_fn_index = get_function_index(my_fn_string, parse_line_list)
+
             print(idx,my_fn_string,my_fn_index,len(fn_index))
             if my_fn_index[side]:
                 temp_fn_idx = []
@@ -118,13 +127,13 @@ def parse_arguments():
 
     parser.add_argument('-A',
         default='9999999',
-        dest='calldepth',
+        dest='calleedepth',
         action='store',
         help='traverse and display x linkage up the stack')
 
     parser.add_argument('-B',
         default='9999999',
-        dest='calleedepth',
+        dest='calldepth',
         action='store',
         help='traverse and display x linkage down the stack')
 
