@@ -54,22 +54,25 @@ def split_line_list(line_list):
 
     return parsed_line_list
 
-def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side, accumulated_idx):
-    for idx in fn_index:
-        my_fn_string = parse_line_list[idx][side]
-        my_fn_index = get_function_index(my_fn_string, parse_line_list)
-        if my_fn_index[side]:
-            temp_fn_idx = []
-            for item in my_fn_index[side]:
-                if item not in accumulated_idx:
-                    temp_fn_idx.append(item)
+def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side, accumulated_idx, level, max_level):
+    r_level = level + 1
+    if r_level < max_level:
+        print(r_level, max_level,len(fn_index),fn_call_string, fn_index)
+        for idx in fn_index:
+            my_fn_string = parse_line_list[idx][side]
+            my_fn_index = get_function_index(my_fn_string, parse_line_list)
+            print(idx,my_fn_string,my_fn_index,len(fn_index))
+            if my_fn_index[side]:
+                temp_fn_idx = []
+                for item in my_fn_index[side]:
+                    if item not in accumulated_idx:
+                        temp_fn_idx.append(item)
 
-            if temp_fn_idx:
-                accumulated_idx += temp_fn_idx
-                tmp_idx = get_table_index_recursively(temp_fn_idx, my_fn_string, parse_line_list, side, accumulated_idx)
-
-                if tmp_idx:
-                    accumulated_idx =tmp_idx
+                if temp_fn_idx:
+                    accumulated_idx = tmp_idx = get_table_index_recursively(temp_fn_idx, my_fn_string, parse_line_list, side, accumulated_idx, r_level, max_level)
+                    accumulated_idx.extend(temp_fn_idx)
+                    #if tmp_idx:
+                    #    =tmp_idx
 
     return accumulated_idx
 
@@ -114,19 +117,21 @@ def parse_arguments():
         help='exclude all functions but those specified')
 
     parser.add_argument('-A',
-            dest='callcount',
-            action='store',
-            help='traverse and display x linkage up the stack')
+        default='9999999',
+        dest='callcount',
+        action='store',
+        help='traverse and display x linkage up the stack')
 
     parser.add_argument('-B',
-            dest='calleecount',
-            action='store',
-            help='traverse and display x linkage down the stack')
+        default='9999999',
+        dest='calleecount',
+        action='store',
+        help='traverse and display x linkage down the stack')
 
     parser.add_argument('-u',
-            dest='update',
-            action='store_true',
-            help='updates the file source_mapping with recent rtl information')
+        dest='update',
+        action='store_true',
+        help='updates the file source_mapping with recent rtl information')
 
     args = parser.parse_args()
 
@@ -177,18 +182,18 @@ def main():
         # handling call side
         if fn_idx[0]:
             fn = parsed_line_list[fn_idx[0][0]]
-            accumulated_idx = fn_idx[0]
-            tmp_idx = get_table_index_recursively(fn_idx[0], fn, parsed_line_list, 0, accumulated_idx)
+            accumulated_idx = list(fn_idx[0])
+            tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx, 0, int(args.callcount))
             if tmp_idx:
-                accumulated_idx = tmp_idx
+                accumulated_idx = list(tmp_idx)
 
         # handling callee side
         if fn_idx[1]:
             fn = parsed_line_list[fn_idx[1][0]]
             accumulated_idx += fn_idx[1]
-            tmp_idx = get_table_index_recursively(fn_idx[1], fn, parsed_line_list, 1, accumulated_idx)
+            tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx, 0, int(args.calleecount))
             if tmp_idx:
-                accumulated_idx = tmp_idx
+                accumulated_idx = list(tmp_idx)
         
         dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
         dot_pipe = subprocess.Popen(dot_arg,
