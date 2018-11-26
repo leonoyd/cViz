@@ -146,7 +146,7 @@ def main():
 
     if args.update:
         dot_expand_files = find ('*.expand', '.')
-        program_arg = ["perl", "/home/ldouglas/perl5/bin/egypt"]
+        program_arg = ["perl", "/usr/local/bin/egypt"]
         program_arg.extend(dot_expand_files)
         pipe = subprocess.Popen(program_arg,
                                 stdout=subprocess.PIPE,
