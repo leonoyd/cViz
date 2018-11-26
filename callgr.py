@@ -57,20 +57,11 @@ def split_line_list(line_list):
 def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side, accumulated_idx, level, max_level):
     r_level = level + 1
 
-    my_fn_side = 0
-    if side == 1:
-        my_fn_side = 0
-    else:
-        my_fn_side = 1
-
-
     if r_level < max_level:
-        print(r_level, max_level,len(fn_index),fn_call_string, fn_index)
         for idx in fn_index:
             my_fn_string = parse_line_list[idx][side]
             my_fn_index = get_function_index(my_fn_string, parse_line_list)
 
-            print(idx,my_fn_string,my_fn_index,len(fn_index))
             if my_fn_index[side]:
                 temp_fn_idx = []
                 for item in my_fn_index[side]:
@@ -80,8 +71,6 @@ def get_table_index_recursively(fn_index, fn_call_string, parse_line_list, side,
                 if temp_fn_idx:
                     accumulated_idx = tmp_idx = get_table_index_recursively(temp_fn_idx, my_fn_string, parse_line_list, side, accumulated_idx, r_level, max_level)
                     accumulated_idx.extend(temp_fn_idx)
-                    #if tmp_idx:
-                    #    =tmp_idx
 
     return accumulated_idx
 
@@ -178,31 +167,31 @@ def main():
     file = open(".source_mapping", "r")
     line_list = get_file_content(file)
     file.close()
-    #if(arg.functionnames)
-    #    function_list =
+
     parsed_line_list = split_line_list(line_list)
 
     if args.functionnames:
         fn_string = args.functionnames[0]
-        #print("creating gramp", fn_string, dot_pipe )
         fn_idx = get_function_index(fn_string, parsed_line_list)
 
         accumulated_idx = []
         # handling call side
-        if fn_idx[0]:
-            fn = parsed_line_list[fn_idx[0][0]]
-            accumulated_idx = list(fn_idx[0])
-            tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx, 0, int(args.calldepth))
-            if tmp_idx:
-                accumulated_idx = list(tmp_idx)
+        if int(args.calldepth) > 0: 
+            if fn_idx[0]:
+                fn = parsed_line_list[fn_idx[0][0]]
+                accumulated_idx = list(fn_idx[0])
+                tmp_idx = get_table_index_recursively(fn_idx[0], fn_string, parsed_line_list, 0, accumulated_idx, 0, int(args.calldepth))
+                if tmp_idx:
+                    accumulated_idx = list(tmp_idx)
 
         # handling callee side
-        if fn_idx[1]:
-            fn = parsed_line_list[fn_idx[1][0]]
-            accumulated_idx += fn_idx[1]
-            tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx, 0, int(args.calleedepth))
-            if tmp_idx:
-                accumulated_idx = list(tmp_idx)
+        if int(args.calleedepth) > 0: 
+            if fn_idx[1]:
+                fn = parsed_line_list[fn_idx[1][0]]
+                accumulated_idx += fn_idx[1]
+                tmp_idx = get_table_index_recursively(fn_idx[1], fn_string, parsed_line_list, 1, accumulated_idx, 0, int(args.calleedepth))
+                if tmp_idx:
+                    accumulated_idx = list(tmp_idx)
         
         dot_arg= ["dot", "-Gsize=8.5,11", "-Grankdir=LR", "-Tps", "-o", "cVizGraph.pdf"]
         dot_pipe = subprocess.Popen(dot_arg,
