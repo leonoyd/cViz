@@ -160,7 +160,7 @@ def main():
             print("updating record")
             w_file.writelines(output)
         else:
-            print("Error updating record")
+            print("Error updating record:", error)
 
         w_file.close()
 
