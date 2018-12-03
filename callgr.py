@@ -162,7 +162,6 @@ def main():
             print("Error updating record")
 
         w_file.close()
-        pipe.kill()
 
     file = open(".source_mapping", "r")
     line_list = get_file_content(file)
