@@ -225,6 +225,6 @@ def main():
         dot_pipe.stdin.write(line_list[-1])
     
     ret_err = dot_pipe.communicate()
-    if verbose:
+    if args.verbose:
         if ret_err: 
             print(ret_err)
