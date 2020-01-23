@@ -13,12 +13,19 @@ operating system.
 
 Assuming an Ubuntu operating system:
 
-* egypt: To install follow instruction from http://www.gson.org/egypt/
+* egypt: To install follow instruction from http://www.gson.org/egypt/ or follow instructions in Installation section
 * graphviz: `sudo apt-get install graphviz`
 * python `sudo apt-get install python`
 
-## Installation
-
+## Egypt
+```
+tar egypt-1.10.tar.gz
+cd egypt-1.10
+perl Makefile.PL
+make
+make install
+```
+## Callgr
 To install __CallGr__ onto your system:
 
 ```
